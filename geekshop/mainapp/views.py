@@ -1,15 +1,12 @@
 from django.shortcuts import render
+from .models import ProductCategory
 
 
 # Create your views here.
-def products(request):
-    links_menu = [
-        {'href': 'products_all', 'name': 'все'},
-        {'href': 'products_home', 'name': 'дом'},
-        {'href': 'products_office', 'name': 'офис'},
-        {'href': 'products_modern', 'name': 'модерн'},
-        {'href': 'products_classic', 'name': 'классика'},
-    ]
+def products(request, pk=None):
+    links_menu = [{'name': 'все'}]
+    links_menu += ProductCategory.objects.all()
+
     context = {
         'title': 'каталог',
         'links_menu': links_menu
