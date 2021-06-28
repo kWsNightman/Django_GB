@@ -1,9 +1,13 @@
 from django.shortcuts import render
 
+from mainapp.models import Product
+
 
 def index(request):
+    products = Product.objects.all()[:3]
     context = {
-        'title': 'магазин'
+        'title': 'магазин',
+        'products': products,
     }
     return render(request, 'index.html', context=context)
 
