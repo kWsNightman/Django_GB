@@ -6,7 +6,6 @@ from .models import ProductCategory
 def products(request, pk=None):
     links_menu = [{'name': 'все'}]
     links_menu += ProductCategory.objects.all()
-
     context = {
         'title': 'каталог',
         'links_menu': links_menu
