@@ -95,6 +95,12 @@ html, body {
     position: absolute;
     top: 63px;
     left: 1210px;
+    text-decoration: none;
+}
+
+.basket .basket_count {
+    margin-left: 25px;
+    color: red;
 }
 
 .clearfix:after {
