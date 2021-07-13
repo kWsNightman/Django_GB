@@ -15,7 +15,7 @@ def get_same_products(hot_product):
 
 
 def products(request, pk=None):
-    links_menu = ProductCategory.objects.all()
+    links_menu = ProductCategory.objects.all().exclude(is_deleted=True)
     products = None
     category = None
     hot_product = get_hot_product()
@@ -46,7 +46,7 @@ def product(request, pk):
 
     context = {
         'title': title,
-        'links_menu': ProductCategory.objects.all(),
+        'links_menu': ProductCategory.objects.all().exclude(is_deleted=True),
         'product': get_object_or_404(Product, pk=pk),
 
     }
