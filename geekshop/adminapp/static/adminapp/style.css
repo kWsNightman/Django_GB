@@ -180,3 +180,9 @@ a {
         padding-left: calc(var(--nav-width) + 188px)
     }
 }
+.row {
+    justify-content: center;
+}
+.form-horizontal{
+    width: initial;
+}

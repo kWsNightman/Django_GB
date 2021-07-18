@@ -1,8 +1,10 @@
 {% load static %}
+{% load my_tags %}
+
 <div class="details-products">
     <div class="details-slider">
         <div class="slider-product">
-            <img class="hot_img" src="/media/{{ hot_product.image }}">
+            <img class="hot_img" src="/media/{{ hot_product.image | media_folder_products}}">
         </div>
         <div class="slider-control">
             <div class="block">

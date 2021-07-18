@@ -8,7 +8,7 @@
             <div class="card mb-4">
                 <div class="card-header">
                     <i class="fas fa-table mr-1"></i>
-                    {{ category.name }}
+                    {{ objects.0.category.name }}
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -38,20 +38,20 @@
                             <tbody>
                             {% for product in objects %}
                                 <tr {% if product.is_deleted %} style="opacity: 0.5;" {% endif %}>
-                                    <td><a href="{#% url 'admin_staff:product_update' product.id %#}"
+                                    <td><a href="{% url 'admin_staff:product_read' product.id %}"
                                            style="color: dodgerblue">{{ product.name }}</a></td>
                                     <td>{{ product.description }}</td>
                                     <td>{{ product.short_desc }}</td>
                                     <td>{{ product.quantity }}</td>
                                     <td>{{ product.price }}</td>
                                     <td>
-                                        <a href="{#% url 'admin_staff:product_update' pk=product.id %#}">
+                                        <a href="{% url 'admin_staff:product_update' pk=product.id %}">
                                             <i class="fa fa-edit"></i>
                                         </a>
                                     </td>
                                     <td>
                                         <a {% if product.is_deleted %} class="invisible" {% endif %}href="
-                                                {#% url 'admin_staff:product_delete' pk=product.id %#}">
+                                                {% url 'admin_staff:product_delete' pk=product.id %}">
                                             <i class="fa fa-times-circle"></i>
                                         </a>
                                     </td>
@@ -59,10 +59,25 @@
                             {% endfor %}
                             </tbody>
                         </table>
+                        <span class="step-links">
+                                {% if page_obj.has_previous %}
+                                    <a href="?page=1">&laquo; first</a>
+                                    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                                {% endif %}
+
+                            <span class="current">
+                                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                                </span>
+
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                            {% endif %}
+                        </span>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <a href="{#% url 'adminapp:product_create' %#}">
+                    <a href="{% url 'adminapp:product_create' objects.0.category.pk %}">
                         <button class="btn btn-success">Создать продукт</button>
                     </a>
                 </div>

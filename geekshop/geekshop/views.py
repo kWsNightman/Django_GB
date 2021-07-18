@@ -1,19 +1,14 @@
-from django.shortcuts import render
+from django.views.generic import ListView, TemplateView
 
 from mainapp.models import Product
 
 
-def index(request):
-    products = Product.objects.all()[:3]
-    context = {
-        'title': 'магазин',
-        'products': products,
-    }
-    return render(request, 'index.html', context=context)
+class IndexListView(ListView):
+    template_name = 'index.html'
+    queryset = Product.objects.all()[:3]
+    extra_context = {'title': 'магазин', 'products': queryset}
 
 
-def contacts(request):
-    context = {
-        'title': 'контакты'
-    }
-    return render(request, 'contact.html', context=context)
+class ContactsTemplateView(TemplateView):
+    template_name = 'contact.html'
+    extra_context = {'title': 'контакты'}

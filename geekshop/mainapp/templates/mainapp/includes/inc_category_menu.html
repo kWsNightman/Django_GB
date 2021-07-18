@@ -10,7 +10,7 @@
         </li>
         {% for link in links_menu %}
             <li><a href="{% url 'products:category' link.pk %}"
-                   class="{% if link.pk == product.category.pk %}active{% endif %}">
+                   class="{% if link.pk == product.category.pk  or link.pk == category.pk %}active{% endif %}">
                 {{ link.name }}</a></li>
         {% endfor %}
     </ul>

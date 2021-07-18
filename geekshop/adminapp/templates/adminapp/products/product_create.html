@@ -1,4 +1,4 @@
-{% extends 'authapp/base.html' %}
+{% extends 'adminapp/base.html' %}
 {% load static %}
 
 {% block content %}
@@ -7,7 +7,7 @@
         {% csrf_token %}
         {{ form.as_p }}
 
-        <input class="form-control" type="submit" value="Зарегистрироваться">
+        <input class="form-control" type="submit" value="Создать">
     </form>
     </div>
 

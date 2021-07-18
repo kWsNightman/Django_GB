@@ -1,70 +1,68 @@
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
-from django.urls import reverse
+from django.views import View
+from django.views.generic import ListView
 
 from basketapp.models import Basket
 from mainapp.models import Product
 
 
-@login_required
-def basket(request):
-    if request.user.is_authenticated:
-        basket = Basket.objects.filter(user=request.user.pk).order_by('product__category')
-        context = {
-            'basket': basket
-        }
-        return render(request, 'basketapp/basket.html', context)
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+class BasketListView(ListView):
+    model = Basket
+    template_name = 'basketapp/basket.html'
+    context_object_name = 'basket'
+
+    def get_queryset(self):
+        return Basket.objects.filter(user=self.request.user.pk).order_by('product__category')
 
 
-@login_required
-def basket_add(request, pk):
-    if 'login' in request.META.get('HTTP_REFERER'):
-        return HttpResponseRedirect(reverse('products:product', args=[pk]))
+class AddToBasketView(View):
 
-    product = get_object_or_404(Product, pk=pk)
+    def get(self, request, **kwargs):
+        product = get_object_or_404(Product, pk=self.kwargs['pk'])
 
-    basket = Basket.objects.filter(user=request.user, product=product).first()
+        basket = Basket.objects.filter(user=request.user, product=product).first()
 
-    if not basket:
-        basket = Basket(user=request.user, product=product)
+        if not basket:
+            basket = Basket(user=request.user, product=product)
 
-    basket.quantity += 1
-    basket.save()
+        basket.quantity += 1
+        basket.save()
 
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-@login_required
-def basket_remove(request, pk):
-    remove_item = get_object_or_404(Basket, pk=pk)
-    remove_item.delete()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+class RemoveFromBasketView(View):
+
+    def get(self, request, **kwargs):
+        remove_item = get_object_or_404(Basket, pk=self.kwargs['pk'])
+        remove_item.delete()
+        return HttpResponseRedirect(self.request.META.get('HTTP_REFERER'))
 
 
-@login_required
-def basket_edit(request, pk, quantity):
-    if request.is_ajax():
-        quantity = int(quantity)
-        new_basket_item = Basket.objects.get(pk=int(pk))
+class BasketEditView(View):
 
-        if quantity > 0:
-            new_basket_item.quantity = quantity
-            new_basket_item.save()
-        else:
-            new_basket_item.delete()
+    def get(self, reqest, **kwargs):
+        if self.request.is_ajax():
+            quantity = int(self.kwargs['quantity'])
+            new_basket_item = Basket.objects.get(pk=int(self.kwargs['pk']))
 
-        basket = Basket.objects.filter(user=request.user.pk).order_by('product__category')
-        basket_count = Basket.objects.filter(user=request.user)
+            if quantity > 0:
+                new_basket_item.quantity = quantity
+                new_basket_item.save()
+            else:
+                new_basket_item.delete()
 
-        context = {
-            'basket': basket,
-            'basket_count': basket_count
-        }
+            basket = Basket.objects.filter(user=self.request.user.pk).order_by('product__category')
+            basket_count = Basket.objects.filter(user=self.request.user)
 
-        i = render_to_string('basketapp/includes/inc_main_menu_basket.html', context)
-        result = render_to_string('basketapp/includes/inc_basket_list.html', context)
+            context = {
+                'basket': basket,
+                'basket_count': basket_count
+            }
 
-        return JsonResponse({'result': result, 'i': i})
+            i = render_to_string('basketapp/includes/inc_main_menu_basket.html', context)
+            result = render_to_string('basketapp/includes/inc_basket_list.html', context)
+
+            return JsonResponse({'result': result, 'i': i})

@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load my_tags %}
+
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{% static 'mainapp/style.css' %}">
 {% endblock %}
+
 {% block content %}
     <div class="hero-white">
         {% include 'includes/inc_main_menu.html' %}
@@ -17,8 +20,8 @@
         <div class="related-products clearfix">
             {% for product in products %}
                 <div class="block">
-                    <a href="{% url 'products:product' product.pk %}"><img class="same_prod_img"
-                                                                     src="/media/{{ product.image }}" alt="">
+                    <a href="{% url 'products:product' product.pk %}"><img
+                            class="same_prod_img" src="/media/{{ product.image | media_folder_products }}" alt="">
                         <div class="text">
                             <img src="{% static 'geekshop/img/icon-hover.png' %}" alt="img">
                             <h4>{{ product.name }}</h4>
@@ -28,45 +31,48 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="related">
-            <div class="title clearfix">
-                <h2>Похожие продукты</h2>
-                <a class="explore" href="#">показать все <img src="{% static 'geekshop/img/arrow.png' %}" alt=""></a>
-            </div>
-            <div class="related-products clearfix">
-                {% for product in same_products %}
-                    <div class="block">
-                        <a href="{% url 'products:product' product.pk %}"><img class="same_prod_img"
-                                                                         src="/media/{{ product.image }}" alt="">
-                            <div class="text">
-                                <img src="{% static 'geekshop/img/icon-hover.png' %}" alt="img">
-                                <h4>{{ product.name }}</h4>
-                                <p>{{ product.short_desc }}</p>
-                            </div>
-                        </a>
-                    </div>
-                {% endfor %}
+        {% if products %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
 
-                {#                <div class="block">#}
-                {#                    <a href="#"><img src="{% static 'geekshop/img/product-21.jpg' %}" alt="">#}
-                {#                        <div class="text">#}
-                {#                            <img src="{% static 'geekshop/img/icon-hover.png' %}" alt="img">#}
-                {##}
-                {#                            <h4>Стул повышенного качества</h4>#}
-                {#                            <p>Не оторваться. </p>#}
-                {#                        </div>#}
-                {#                    </a>#}
-                {#                </div>#}
-                {#                <div class="block">#}
-                {#                    <a href="#"><img src="{% static 'geekshop/img/product-31.jpg' %}" alt="">#}
-                {#                        <div class="text">#}
-                {#                            <img src="{% static 'geekshop/img/icon-hover.png' %}" alt="img">#}
-                {#                            <h4>Стул повышенного качества</h4>#}
-                {#                            <p>Не оторваться. </p>#}
-                {#                        </div>#}
-                {#                    </a>#}
-                {#                </div>#}
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </span>
             </div>
-        </div>
+        {% endif %}
+        {% if same_products %}
+            {% include 'mainapp/includes/inc_same_products.html' %}
+        {% endif %}
+
+        {#                <div class="block">#}
+        {#                    <a href="#"><img src="{% static 'geekshop/img/product-21.jpg' %}" alt="">#}
+        {#                        <div class="text">#}
+        {#                            <img src="{% static 'geekshop/img/icon-hover.png' %}" alt="img">#}
+        {##}
+        {#                            <h4>Стул повышенного качества</h4>#}
+        {#                            <p>Не оторваться. </p>#}
+        {#                        </div>#}
+        {#                    </a>#}
+        {#                </div>#}
+        {#                <div class="block">#}
+        {#                    <a href="#"><img src="{% static 'geekshop/img/product-31.jpg' %}" alt="">#}
+        {#                        <div class="text">#}
+        {#                            <img src="{% static 'geekshop/img/icon-hover.png' %}" alt="img">#}
+        {#                            <h4>Стул повышенного качества</h4>#}
+        {#                            <p>Не оторваться. </p>#}
+        {#                        </div>#}
+        {#                    </a>#}
+        {#                </div>#}
     </div>
+
 {% endblock %}

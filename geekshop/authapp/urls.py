@@ -1,14 +1,15 @@
+from django.contrib.auth.decorators import login_required
 from django.urls import path
 
 import authapp.views
-from .views import login, logout, register, edit
+from .views import *
 
 app_name = 'authapp'
 
 urlpatterns = [
-    path('login/', login, name='login'),
-    path('logout/', logout, name='logout'),
-    path('register/', register, name='register'),
-    path('edit/', edit, name='edit'),
+    path('login/', UserLoginView.as_view(), name='login'),
+    path('logout/', UserLogoutView.as_view(), name='logout'),
+    path('register/', UserRegisterCreateView.as_view(), name='register'),
+    path('edit/', login_required(UserEditUpdateView.as_view()), name='edit'),
 
 ]
