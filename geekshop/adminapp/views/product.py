@@ -42,7 +42,6 @@ class ProductUpdateView(IsAdminUserPassedTestMixin, UpdateView):
     def get_initial(self):
         _object = self.get_object()
         self.initial = {'category': _object.category}
-        return self.initial
 
     def get_success_url(self):
         return reverse('admin_staff:products', args=[self.request.POST.get('category')])
