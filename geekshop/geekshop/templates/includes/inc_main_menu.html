@@ -1,0 +1,35 @@
+<div class="header clearfix">
+    <a href="{% url 'index' %}" class="logo"></a>
+    <ul class="menu">
+        <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}">домой</a></li>
+        <li><a href="{% url 'products:index' %}"
+               class="{% if request.resolver_match.namespace == 'products' %}active{% endif %}">продукты</a></li>
+        <li><a href="{% url 'contacts' %}" class="{% if request.path == '/contacts/' %}active{% endif %}">контакты</a>
+            {% if user.is_superuser %}
+                <li><a href="{% url 'admin_staff:users' %}">Админка</a>
+            {% endif %}
+            </li>
+        {% if user.is_authenticated %}
+            <li>
+                <a href="{% url 'auth:edit' %}">
+                    {{ user.first_name|default:'Пользователь' }}
+                </a>
+            </li>
+        {% endif %}
+        <li>
+            {% if user.is_authenticated %}
+                <a href="{% url 'auth:logout' %}">Выйти</a>
+            {% else %}
+                <a href="{% url 'auth:login' %}">Войти</a>
+            {% endif %}
+        </li>
+    </ul>
+    <a href="#" class="search"></a>
+    <a href="{% url 'basket:view' %}" class="basket">
+        <span class="basket_count">
+        {% if basket_count %}
+            {{ basket_count.0.total_cost|floatformat:0 }} руб.<br>({{ basket_count.0.product_quantity }}&nbsp;шт.)
+        {% endif %}
+        </span>
+    </a>
+</div>
