@@ -1,20 +1,13 @@
 from django.contrib import auth
 from django.contrib.auth.views import LoginView, LogoutView
+from django.db import transaction
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView
 
-from authapp.forms import ShopUserLoginForm, ShopUserEditForm, ShopUserRegisterForm
+from authapp.forms import ShopUserLoginForm, ShopUserEditForm, ShopUserRegisterForm, ShopUserProfileEditForm
 from authapp.models import ShopUser
-
-
-# def send_verify_email(user):
-#     verify_link = reverse('auth:verify', args=[user.email, user.activation_key])
-#     title = f'Активация на сайте, пользователя - {user.username}'
-#     message = f'Для активации вашей учетной {user.email} записи на портале {settings.DOMAIN_NAME}' \
-#               f'перейдите по ссылке \n{settings.DOMAIN_NAME}{verify_link}'
-#     return send_mail(title, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
 
 
 class UserVerifyView(View):
@@ -24,12 +17,13 @@ class UserVerifyView(View):
             if user.activation_key == self.kwargs['activation_key'] and not user.is_activation_expired():
                 user.is_active = True
                 user.save()
-                auth.login(request, user)
+                auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 return render(request, 'authapp/verification.html')
             else:
                 return render(request, 'authapp/verification.html')
         except Exception as err:
-            print('Error')
+            print(err)
+
 
 class UserLoginView(LoginView):
     authentication_form = ShopUserLoginForm
@@ -50,16 +44,8 @@ class UserRegisterCreateView(CreateView):
     success_url = reverse_lazy('index')
     extra_context = {'title': 'регистрация', 'operation_name': 'регистрация'}
 
-    # def form_valid(self, form):
-    #     self.object = form.save()
-    #     if send_verify_email(self.object):
-    #         print('Сообщение отправлено')
-    #     else:
-    #         print('сообщение не отправлено')
-    #     return super(UserRegisterCreateView, self).form_valid(form)
 
-
-class UserEditUpdateView(UpdateView):
+class UserEditUpdateView(UpdateView):  # Возможно лучше делать через наследование класса View
     model = ShopUser
     template_name = 'authapp/edit.html'
     form_class = ShopUserEditForm
@@ -68,3 +54,18 @@ class UserEditUpdateView(UpdateView):
 
     def get_object(self, **kwargs):
         return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = {'form_profile': ShopUserProfileEditForm(instance=self.get_object().shopuserprofile)}
+        return super(UserEditUpdateView, self).get_context_data(**context)
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        super(UserEditUpdateView, self).post(request)
+        form = self.get_form()
+        form_profile = ShopUserProfileEditForm(request.POST, instance=self.get_object().shopuserprofile)
+        # Тут скорее всего есть ошибка оно не так должно делаться наверное но пока что работает
+        if form.is_valid() and form_profile.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)

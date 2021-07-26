@@ -16,7 +16,16 @@
                     <br>
                     <button type="submit" class="btn btn-primary">Войти</button>
                 </form>
-                <button class="btn btn-round form-control "><a href="{% url 'auth:register' %}" class="">Зарегистрироваться</a>
+                <button class="btn btn-round form-control ">
+                    <a href="{% url 'auth:register' %}" class="">Зарегистрироваться</a>
+                </button>
+                <button class="btn btn-round form-control">
+                    <a href="{% url 'social:begin' 'vk-oauth2' %}?next=/">Вход через ВКонтакте</a>
+                </button>
+                <button class="btn btn-round form-control">
+                    <a href="{% url 'social:begin' 'google-oauth2' %}?next=/">
+                        Google+ sign in
+                    </a>
                 </button>
             </div>
         </div>
