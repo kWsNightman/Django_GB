@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'social_django',
+    'corsheaders',
+    'rest_framework',
 
     'mainapp',
     'authapp',
@@ -59,8 +61,17 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+
     'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:4200'
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'geekshop.urls'
 
@@ -69,7 +80,7 @@ AUTH_USER_MODEL = 'authapp.ShopUser'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['geekshop/templates'],
+        'DIRS': ['geekshop/templates','geekshop/static/geekshop/ng-test/src/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

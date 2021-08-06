@@ -3,7 +3,9 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
+from rest_framework import viewsets, permissions
 
+from adminapp import serializers
 from adminapp.forms import ShopUserAdminEditForm
 from authapp.forms import ShopUserRegisterForm
 from authapp.models import ShopUser
@@ -55,3 +57,12 @@ class UserDeleteView(IsAdminUserPassedTestMixin, DeleteView):
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
+
+
+class ShopUserViewSet(viewsets.ModelViewSet):
+    queryset = ShopUser.objects.all()
+    serializer_class = serializers.ShopUserSerializer
+
+    def list(self, request, *args, **kwargs):
+        print(request)
+        return super(ShopUserViewSet, self).list(request,*args,**kwargs)

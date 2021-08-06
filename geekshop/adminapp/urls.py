@@ -1,8 +1,13 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
+
 from adminapp.views.category import *
 from adminapp.views.product import *
 from adminapp.views.user import *
 app_name = 'adminapp'
+
+router = routers.DefaultRouter(trailing_slash=False)
+router.register('users', ShopUserViewSet)
 
 urlpatterns = [
     path('users/create/', UserCreateView.as_view(), name='user_create'),
@@ -20,4 +25,6 @@ urlpatterns = [
     path('products/read/<int:pk>/', ProductReadListView.as_view(), name='product_read'),
     path('products/update/<int:pk>/', ProductUpdateView.as_view(), name='product_update'),
     path('products/delete/<int:pk>/', ProductDeleteView.as_view(), name='product_delete'),
+
+    path('api/', include(router.urls))
 ]
