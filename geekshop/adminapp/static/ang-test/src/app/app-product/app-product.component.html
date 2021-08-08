@@ -1,0 +1,76 @@
+
+<main>
+  <div class="container-fluid">
+    <h1 class="mt-4">Продукты</h1>
+    <div class="card mb-4">
+      <div class="card-header">
+        <i class="fas fa-table mr-1">Категории</i>
+        <ul class="nav nav-tabs" >
+          <li class="nav-item" >
+            <a class="nav-link " aria-current="page" [class.active]="tab==0" (click)="getProducts()">Все</a>
+          </li>
+          <li class="nav-item"  *ngFor=" let i of category">
+            <a class="nav-link" (click)="getProducts(i.id)" [class.active]="tab===i.id" >{{i.name}}</a>
+          </li>
+
+        </ul>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+            <tr>
+              <th>Название</th>
+              <th>Описание</th>
+              <th>Краткое Описание</th>
+              <th>Количество</th>
+              <th>Стоимость</th>
+              <th>Редактировать</th>
+              <th>Удалить</th>
+            </tr>
+            </thead>
+            <tfoot>
+            <tr>
+              <th>Название</th>
+              <th>Описание</th>
+              <th>Краткое Описание</th>
+              <th>Количество</th>
+              <th>Стоимость</th>
+              <th>Редактировать</th>
+              <th>Удалить</th>
+            </tr>
+            </tfoot>
+            <tbody>
+
+            <tr  [ngStyle]="{ opacity:(product.is_deleted === true)?0.5: 1}" *ngFor="let product of products">
+              <td><a href=""
+                     style="color: dodgerblue">{{product.name}}</a></td>
+              <td>{{product.description}}</td>
+              <td>{{product.short_desc}}</td>
+              <td>{{product.quantity}}</td>
+              <td>{{product.price}}</td>
+              <td>
+                <a href="">
+                  <i class="fa fa-edit"></i>
+                </a>
+              </td>
+              <td>
+                <a  class="invisible" href="">
+                  <i class="fa fa-times-circle"></i>
+                </a>
+              </td>
+            </tr>
+
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="">
+          <button class="btn btn-success">Создать продукт</button>
+        </a>
+      </div>
+    </div>
+  </div>
+</main>

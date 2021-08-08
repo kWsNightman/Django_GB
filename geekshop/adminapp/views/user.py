@@ -4,6 +4,8 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from adminapp import serializers
 from adminapp.forms import ShopUserAdminEditForm
@@ -63,6 +65,6 @@ class ShopUserViewSet(viewsets.ModelViewSet):
     queryset = ShopUser.objects.all()
     serializer_class = serializers.ShopUserSerializer
 
-    def list(self, request, *args, **kwargs):
-        print(request)
-        return super(ShopUserViewSet, self).list(request,*args,**kwargs)
+
+
+

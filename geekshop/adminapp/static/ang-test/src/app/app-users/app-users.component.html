@@ -1,0 +1,98 @@
+<div class="container-fluid">
+  <h1 class="mt-4">Пользователи</h1>
+  <div class="card mb-4">
+    <div class="card-header">
+      <i class="fas fa-table mr-1"></i>
+      Пользователи
+
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+          <tr>
+            <th>Имя пользователя</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Адрес эл. почты</th>
+            <th>Персонал сайта</th>
+            <th>Активный</th>
+            <th>Вход</th>
+            <th>Удалить</th>
+          </tr>
+          </thead>
+          <tfoot>
+          <tr>
+            <th>Имя пользователя</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Адрес эл. почты</th>
+            <th>Персонал сайта</th>
+            <th>Активный</th>
+            <th>Вход</th>
+            <th>Удалить</th>
+          </tr>
+          </tfoot>
+          <tbody>
+
+          <tr *ngFor="let i of users "
+              [ngStyle]="{ opacity:(i.is_deleted === true)?0.5: 1}"
+          >
+            <td><nav>
+              <a routerLink="/users/{{i.id}}"
+                 style="color: dodgerblue"> {{i.username}} </a></nav></td>
+            <td>{{i.first_name}}</td>
+            <td>{{i.last_name}}</td>
+            <td>{{i.email}}</td>
+            <td class="text-center">
+              <div *ngIf="i.is_staff === true; else elsediv">
+                <i class="fa fa-check-circle"></i>
+              </div>
+              <ng-template #elsediv>
+                <i class="fa fa-times-circle"></i>
+              </ng-template>
+            </td>
+            <td class="text-center">
+              <div *ngIf="i.is_active === true; else elsediv">
+                <i class="fa fa-check-circle"></i>
+              </div>
+              <ng-template #elsediv>
+                <i class="fa fa-times-circle"></i>
+              </ng-template>
+            </td>
+            <td>{{i.last_login | date}}</td>
+            <td>
+              <a *ngIf="!i.is_deleted" href="">
+                <i class="fa fa-times-circle"></i>
+              </a>
+            </td>
+          </tr>
+
+          </tbody>
+        </table>
+        <div class="pagination">
+                            <span class="step-links">
+
+                                    <a href="">&laquo; first</a>
+                                    <a href="">previous</a>
+
+
+                                <span class="current">
+                                    Page  of .
+                                </span>
+
+
+                                    <a href="">next</a>
+                                    <a href="">last &raquo;</a>
+
+                            </span>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="">
+        <button class="btn btn-success">Создать пользователя</button>
+      </a>
+    </div>
+  </div>
+</div>

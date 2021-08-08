@@ -8,6 +8,9 @@ app_name = 'adminapp'
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register('users', ShopUserViewSet)
+router.register('categories', CategoryViewSet)
+router.register('products', ProductsViewSet)
+
 
 urlpatterns = [
     path('users/create/', UserCreateView.as_view(), name='user_create'),
@@ -25,6 +28,7 @@ urlpatterns = [
     path('products/read/<int:pk>/', ProductReadListView.as_view(), name='product_read'),
     path('products/update/<int:pk>/', ProductUpdateView.as_view(), name='product_update'),
     path('products/delete/<int:pk>/', ProductDeleteView.as_view(), name='product_delete'),
+    path('api/categories/<int:pk>/products', ProductsOfCategoryViewSet.as_view()),
 
     path('api/', include(router.urls))
 ]

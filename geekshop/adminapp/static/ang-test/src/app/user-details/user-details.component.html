@@ -1,0 +1,9 @@
+<section class="edit_profile">
+  <h3 class="title">Edit profile</h3>
+  <form class="edit_profile_form" [formGroup]="form" (ngSubmit)="submit()" >
+    <input type="text" formControlName="username" placeholder="username">
+    <input type="text" formControlName="first_name" placeholder="first_name">
+    <input type="text" formControlName="last_name" placeholder="last_name">
+    <button class="submit-btn" type="submit">Обновить</button>
+  </form>
+</section>
