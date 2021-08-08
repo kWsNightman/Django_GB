@@ -2,10 +2,12 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
+from rest_framework import viewsets, generics
 
 from adminapp.forms import ProductEditForm
 from mainapp.models import ProductCategory, Product
 from .user import IsAdminUserPassedTestMixin
+from .. import serializers
 
 
 class ProductCreateView(IsAdminUserPassedTestMixin, CreateView):
@@ -73,3 +75,17 @@ class ProductReadListView(IsAdminUserPassedTestMixin, ListView):
 
     def get_queryset(self):
         return Product.objects.get(pk=self.kwargs.get('pk'))
+
+
+class ProductsViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all().order_by('is_deleted')
+    serializer_class = serializers.ProductsSerializer
+
+
+class ProductsOfCategoryViewSet(generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = serializers.ProductsSerializer
+
+
+    def get_queryset(self):
+        return Product.objects.filter(category__pk=self.kwargs.get('pk')).order_by('is_deleted', 'name')

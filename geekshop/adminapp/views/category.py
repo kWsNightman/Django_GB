@@ -1,9 +1,11 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView, CreateView, ListView, DeleteView
+from rest_framework import viewsets
+from adminapp import serializers
 
 from adminapp.forms import CategoryCreateForm, CategoryUpdateForm
-from mainapp.models import ProductCategory
+from mainapp.models import ProductCategory, Product
 from .user import IsAdminUserPassedTestMixin
 
 
@@ -18,7 +20,7 @@ class ProductCategoryCreateView(IsAdminUserPassedTestMixin, CreateView):
 class ProductCategoriesListView(IsAdminUserPassedTestMixin, ListView):
     model = ProductCategory
     template_name = 'adminapp/category/categories.html'
-    extra_context = {'title':'админка/категории'}
+    extra_context = {'title': 'админка/категории'}
     context_object_name = 'objects'
 
 
@@ -42,3 +44,17 @@ class ProductCategoryDeleteView(IsAdminUserPassedTestMixin, DeleteView):
         _object.save()
 
         return HttpResponseRedirect(reverse_lazy('admin_staff:categories'))
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = ProductCategory.objects.filter(is_deleted=False)
+    serializer_class = serializers.CategorySerializer
+
+    def get_queryset(self):
+        if self.kwargs.get('pk'):
+            self.serializer_class = serializers.ProductsSerializer
+            return Product.objects.filter(category__pk=self.kwargs.get('pk'))
+        else:
+            return ProductCategory.objects.filter(is_deleted=False)
+
+

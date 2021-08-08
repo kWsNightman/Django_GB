@@ -1,5 +1,3 @@
-
-
 <table class="table">
     <thead>
     <tr>
@@ -36,4 +34,9 @@
         В корзине {{ basket_count.0.product_quantity }} товаров общей стоимостью
         {{ basket_count.0.total_cost }} руб
     </div>
+    <button class="btn btn-default btn-round">
+        <a href="{% url 'ordersapp:order_create' %}">
+            Заказать
+        </a>
+    </button>
 {% endif %}

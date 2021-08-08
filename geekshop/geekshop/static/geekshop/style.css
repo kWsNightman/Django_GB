@@ -13,9 +13,6 @@ html, body {
     height: 100%;
 }
 
-.clr {
-    height: 384px;
-}
 
 .container {
     width: 1366px;
@@ -84,7 +81,7 @@ html, body {
     background-image: url(img/search.png);
     position: absolute;
     top: 63px;
-    left: 1176px;
+    left: 1088px;
 }
 
 .basket {
@@ -94,7 +91,7 @@ html, body {
     background-image: url(img/basket.png);
     position: absolute;
     top: 63px;
-    left: 1210px;
+    left: 1117px;
     text-decoration: none;
 }
 
@@ -104,6 +101,7 @@ html, body {
     color: red;
     white-space: nowrap;
 }
+
 .basket_summary {
     text-align: end;
     margin-top: 50px;
@@ -795,6 +793,7 @@ td:first-child {
 }
 
 .location {
+    display: flex;
     padding: 0px 97px;
 }
 
@@ -997,6 +996,7 @@ td:first-child {
 }
 
 .details-products {
+    display: flex;
     padding-left: 98px;
     padding-right: 98px;
     margin-top: 98px;
@@ -1035,6 +1035,7 @@ td:first-child {
     float: left;
     margin-right: 10px;
 }
+
 .slider-control a img {
     height: 100%;
     width: 100%;
@@ -1067,7 +1068,7 @@ td:first-child {
     font-weight: 700;
     text-align: center;
     margin-top: 47px;
-    margin-bottom: 0px;
+    margin-bottom: 20px;
 }
 
 .description .red {
@@ -1130,6 +1131,7 @@ td:first-child {
 }
 
 .related-products {
+    display: flex;
     margin-bottom: 120px;
 }
 
@@ -1186,3 +1188,4 @@ td:first-child {
 .related-products a:hover .text {
     display: block;
 }
+

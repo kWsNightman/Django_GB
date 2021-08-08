@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -19,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-6)xe1zfem3gz^ew36ju@1qd#)69fc+m@hqhvy9y&g4@jse5(xv'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -35,10 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'social_django',
+    'corsheaders',
+    'rest_framework',
+
     'mainapp',
     'authapp',
     'basketapp',
     'adminapp',
+    'ordersapp',
 ]
 
 MIDDLEWARE = [
@@ -49,7 +60,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:4200'
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'geekshop.urls'
 
@@ -58,7 +80,7 @@ AUTH_USER_MODEL = 'authapp.ShopUser'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['geekshop/templates'],
+        'DIRS': ['geekshop/templates','geekshop/static/geekshop/ng-test/src/'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -66,11 +88,34 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
                 'basketapp.context_processors.basket_count',
+
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
 ]
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    # эта строка связывает существующего юзера с залогененым из соц сети
+    'social_core.pipeline.social_auth.associate_by_email',
+
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'authapp.pipeline.save_user_profile',
+    'social_core.pipeline.social_auth.load_extra_data',
+    # Не устраивает что эта строка меняет данные о существующем юзере если зайти через соц сеть
+    # но как это поведение изменить я пока не придумал.
+    # Можно свой пайплайн написать с проверкой полей но пока что не делал этого
+    'social_core.pipeline.user.user_details',
+)
+
+LOGIN_ERROR_URL = '/'
 
 WSGI_APPLICATION = 'geekshop.wsgi.application'
 
@@ -140,6 +185,20 @@ LOGIN_REDIRECT_URL = '/'
 DOMAIN_NAME = 'http://127.0.0.1:8000'
 
 EMAIL_HOST = 'smtp.mailtrap.io'
-EMAIL_HOST_USER = '10e36fb0674293'
-EMAIL_HOST_PASSWORD = '6d38d59053f119'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = '2525'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.vk.VKOAuth2',
+    'social_core.backends.google.GoogleOAuth2',
+)
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+SOCIAL_AUTH_VK_OAUTH2_KEY = env('SOCIAL_AUTH_VK_OAUTH2_ID')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = env('SOCIAL_AUTH_VK_OAUTH2_KEY')
+SOCIAL_AUTH_VK_OAUTH2_IGNORE_DEFAULT_SCOPE = True
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
