@@ -47,44 +47,6 @@ class ProductsListView(ListView):
         return context
 
 
-#
-# def products(request, pk=None, page=1):
-#     links_menu = ProductCategory.objects.all().exclude(is_deleted=True)
-#     products_paginator = None
-#     category = None
-#     hot_product = None
-#     same_products = None
-#
-#     if pk is not None:
-#         if pk == 0:
-#             products = Product.objects.all().filter(is_deleted=False).order_by('price')
-#             category = {'name': 'все', 'pk': 0}
-#         else:
-#             category = get_object_or_404(ProductCategory, pk=pk)
-#             products = Product.objects.filter(is_deleted=False, category__pk=pk).order_by('price')
-#
-#         paginator = Paginator(products, 3)
-#
-#         try:
-#             products_paginator = paginator.page(page)
-#         except PageNotAnInteger:
-#             products_paginator = paginator.page(1)
-#         except EmptyPage:
-#             products_paginator = paginator.page(paginator.num_pages)
-#     else:
-#         hot_product = get_hot_product()
-#         same_products = get_same_products(hot_product)
-#
-#     context = {
-#         'title': 'каталог',
-#         'links_menu': links_menu,
-#         'products': products_paginator,
-#         'category': category,
-#         'same_products': same_products,
-#         'hot_product': hot_product,
-#     }
-#     return render(request, 'mainapp/products.html', context=context)
-
 class ProductListView(ListView):
     model = Product
     template_name = 'mainapp/product.html'
@@ -96,8 +58,7 @@ class ProductListView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ProductListView, self).get_context_data()
-        print(self.object_list)
-        context['same_products'] = get_same_products(Product.objects.get(pk=self.kwargs['pk']))
+        context['same_products'] = get_same_products(self.object_list)
         return context
 
     def get_queryset(self):

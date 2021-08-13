@@ -27,35 +27,15 @@ class Basket(models.Model):
         return self.product.price * self.quantity
 
     @property
-    def product_quantity(self):
+    def product_quantity_cost(self):
         _items = Basket.objects.filter(user=self.user)
         _total_quantity = sum(list(map(lambda x: x.quantity, _items)))
-        return _total_quantity
-
-    @property
-    def total_cost(self):
-        _items = Basket.objects.filter(user=self.user)
         _total_cost = sum(list(map(lambda x: x.product_cost, _items)))
-        return _total_cost
+        return [_total_quantity, _total_cost]
 
-    @staticmethod
-    def get_item(pk):
-        return Basket.objects.filter(pk=pk).first()
-
-    # Это закомментировал так как налаживается с pre_save и pre_delete
-    # def delete(self, using=None, keep_parents=False):
-    #     self.product.quantity += self.quantity
-    #     self.product.save()
-    #     super(Basket, self).delete()
-
-    # def save(self, *args, **kwargs):
-    #     if self.pk:
-    #         self.product.quantity -= self.quantity - self.__class__.get_item(self.pk).quantity
-    #     else:
-    #         self.product.quantity -= self.quantity
-    #
-    #     self.product.save(update_fields=('quantity'))
-    #     super(self.__class__, self).save(*args, **kwargs)
+    # @staticmethod
+    # def get_item(pk):
+    #     return Basket.objects.filter(pk=pk).first()
 
     class Meta:
         verbose_name = 'корзина'
