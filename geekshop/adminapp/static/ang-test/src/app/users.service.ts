@@ -9,7 +9,7 @@ import {map, tap} from "rxjs/operators";
   providedIn: 'root'
 })
 export class UsersService {
-  private usersUrl = 'http://127.0.0.1:8000/admin_staff/api/users';
+  private usersUrl = 'http://185.46.11.115/admin_staff/api/users';
 
   constructor(
     private http: HttpClient,) { }

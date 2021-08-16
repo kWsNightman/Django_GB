@@ -1,13 +1,87 @@
 import random
 
+from django.conf import settings
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
 
 from .models import ProductCategory, Product
 
 
+def get_links_menu():
+    if settings.LOW_CACHE:
+        key = 'links_menu'
+        links_menu = cache.get(key)
+        if links_menu is None:
+            links_menu = ProductCategory.objects.filter(is_deleted=False)
+            cache.set(key, links_menu)
+        return links_menu
+    else:
+        return ProductCategory.objects.filter(is_deleted=False)
+
+
+def get_category(pk):
+    if settings.LOW_CACHE:
+        key = f'category_{pk}'
+        category = cache.get(key)
+        if category is None:
+            category = get_object_or_404(ProductCategory, pk=pk)
+            cache.set(key, category)
+        return category
+    else:
+        return get_object_or_404(ProductCategory, pk=pk)
+
+
+def get_products():
+    if settings.LOW_CACHE:
+        key = 'products'
+        products = cache.get(key)
+        if products is None:
+            products = Product.objects.filter(is_deleted=False,category__is_deleted=False).select_related('category')
+            cache.set(key, products)
+        return products
+    else:
+        return Product.objects.filter(is_deleted=False,category__is_deleted=False).select_related('category')
+
+
+def get_product(pk):
+    if settings.LOW_CACHE:
+        key = f'product_{pk}'
+        product = cache.get(key)
+        if product is None:
+            product = get_object_or_404(Product, pk=pk)
+            cache.set(key, product)
+        return product
+    else:
+        return get_object_or_404(Product, pk=pk)
+
+
+def get_products_ordered_by_price():
+    if settings.LOW_CACHE:
+        key = 'products_ordered_by_price'
+        products = cache.get(key)
+        if products is None:
+            products = Product.objects.filter(is_deleted=False,category__is_deleted=False).order_by('price')
+            cache.set(key, products)
+        return products
+    else:
+        return Product.objects.filter(is_deleted=False,category__is_deleted=False).order_by('price')
+
+
+def get_products_in_category_ordered_by_price(pk):
+    if settings.LOW_CACHE:
+        key = f'products_in_category_ordered_by_price_{pk}'
+        products = cache.get(key)
+        if products is None:
+            products = Product.objects.filter(category__pk=pk, is_deleted=False,category__is_deleted=False).order_by('price')
+            cache.set(key, products)
+        return products
+    else:
+        return Product.objects.filter(category__pk=pk, is_deleted=False,category__is_deleted=False).order_by('price')
+
+
 def get_hot_product():
-    product = Product.objects.all()
+    product = get_products()
     return random.choice(product)
 
 
@@ -24,7 +98,7 @@ class ProductsListView(ListView):
     ordering = 'price'
     extra_context = {
         'title': 'каталог',
-        'links_menu': ProductCategory.objects.all().exclude(is_deleted=True),
+        'links_menu': get_links_menu(),
     }
 
     def get_queryset(self):
@@ -32,10 +106,10 @@ class ProductsListView(ListView):
             self.paginate_by = 3
             if self.kwargs['pk'] == 0:
                 self.extra_context['category'] = {'name': 'все', 'pk': 0}
-                return Product.objects.all().filter(is_deleted=False).order_by('price')
+                return get_products_ordered_by_price()
             else:
-                self.extra_context['category'] = get_object_or_404(ProductCategory, pk=self.kwargs['pk'])
-                return Product.objects.filter(is_deleted=False, category__pk=self.kwargs['pk']).order_by('price')
+                self.extra_context['category'] = get_category(pk=self.kwargs['pk'])
+                return get_products_in_category_ordered_by_price(pk=self.kwargs['pk'])
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ProductsListView, self).get_context_data()
@@ -47,58 +121,19 @@ class ProductsListView(ListView):
         return context
 
 
-#
-# def products(request, pk=None, page=1):
-#     links_menu = ProductCategory.objects.all().exclude(is_deleted=True)
-#     products_paginator = None
-#     category = None
-#     hot_product = None
-#     same_products = None
-#
-#     if pk is not None:
-#         if pk == 0:
-#             products = Product.objects.all().filter(is_deleted=False).order_by('price')
-#             category = {'name': 'все', 'pk': 0}
-#         else:
-#             category = get_object_or_404(ProductCategory, pk=pk)
-#             products = Product.objects.filter(is_deleted=False, category__pk=pk).order_by('price')
-#
-#         paginator = Paginator(products, 3)
-#
-#         try:
-#             products_paginator = paginator.page(page)
-#         except PageNotAnInteger:
-#             products_paginator = paginator.page(1)
-#         except EmptyPage:
-#             products_paginator = paginator.page(paginator.num_pages)
-#     else:
-#         hot_product = get_hot_product()
-#         same_products = get_same_products(hot_product)
-#
-#     context = {
-#         'title': 'каталог',
-#         'links_menu': links_menu,
-#         'products': products_paginator,
-#         'category': category,
-#         'same_products': same_products,
-#         'hot_product': hot_product,
-#     }
-#     return render(request, 'mainapp/products.html', context=context)
-
 class ProductListView(ListView):
     model = Product
     template_name = 'mainapp/product.html'
     context_object_name = 'product'
     extra_context = {
         'title': 'продукты',
-        'links_menu': ProductCategory.objects.all().exclude(is_deleted=True),
+        'links_menu': get_links_menu(),
     }
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ProductListView, self).get_context_data()
-        print(self.object_list)
-        context['same_products'] = get_same_products(Product.objects.get(pk=self.kwargs['pk']))
+        context['same_products'] = get_same_products(self.object_list)
         return context
 
     def get_queryset(self):
-        return Product.objects.get(pk=self.kwargs['pk'])
+        return get_product(pk=self.kwargs['pk'])

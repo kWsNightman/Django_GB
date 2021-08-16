@@ -31,6 +31,10 @@ class Product(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    @staticmethod
+    def get_items():
+        return Product.objects.filter(is_deleted=False).order_by('category', 'name')
+
     def __str__(self):
         return self.name
 

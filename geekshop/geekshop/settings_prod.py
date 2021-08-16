@@ -27,9 +27,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -44,9 +44,6 @@ INSTALLED_APPS = [
     'social_django',
     'corsheaders',
     'rest_framework',
-    'debug_toolbar',
-    'template_profiler_panel',
-    "django_extensions",
 
     'mainapp',
     'authapp',
@@ -66,7 +63,6 @@ MIDDLEWARE = [
 
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 
     'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
@@ -128,8 +124,8 @@ WSGI_APPLICATION = 'geekshop.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'USER': 'postgres',
     }
 }
 

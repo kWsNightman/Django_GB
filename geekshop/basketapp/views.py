@@ -3,10 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.template.loader import render_to_string
 from django.views import View
 from django.views.generic import ListView
-from rest_framework import viewsets, permissions
 
-from adminapp import serializers
-from authapp.models import ShopUser
 from basketapp.models import Basket
 from mainapp.models import Product
 
@@ -56,13 +53,16 @@ class BasketEditView(View):
                 new_basket_item.save()
             else:
                 new_basket_item.delete()
+            count = coast = 0
 
             basket = Basket.objects.filter(user=self.request.user.pk).order_by('product__category')
-            basket_count = Basket.objects.filter(user=self.request.user)
+            if basket:
+                count, coast = basket[0].product_quantity_cost
 
             context = {
                 'basket': basket,
-                'basket_count': basket_count
+                'total_cost': coast,
+                'total_count': count
             }
 
             i = render_to_string('basketapp/includes/inc_main_menu_basket.html', context)

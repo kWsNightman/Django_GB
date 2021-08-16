@@ -2,6 +2,7 @@ from django.db import models
 
 from geekshop import settings
 from mainapp.models import Product
+from django.utils.functional import cached_property
 
 
 class BasketQuerySet(models.QuerySet):
@@ -26,36 +27,20 @@ class Basket(models.Model):
     def product_cost(self):
         return self.product.price * self.quantity
 
-    @property
-    def product_quantity(self):
-        _items = Basket.objects.filter(user=self.user)
-        _total_quantity = sum(list(map(lambda x: x.quantity, _items)))
-        return _total_quantity
+    @cached_property
+    def get_items_cachet(self):
+        return self.user.basket.select_related()
 
     @property
-    def total_cost(self):
-        _items = Basket.objects.filter(user=self.user)
+    def product_quantity_cost(self):
+        _items = self.get_items_cachet
+        _total_quantity = sum(list(map(lambda x: x.quantity, _items)))
         _total_cost = sum(list(map(lambda x: x.product_cost, _items)))
-        return _total_cost
+        return [_total_quantity, _total_cost]
 
     @staticmethod
     def get_item(pk):
         return Basket.objects.filter(pk=pk).first()
-
-    # Это закомментировал так как налаживается с pre_save и pre_delete
-    # def delete(self, using=None, keep_parents=False):
-    #     self.product.quantity += self.quantity
-    #     self.product.save()
-    #     super(Basket, self).delete()
-
-    # def save(self, *args, **kwargs):
-    #     if self.pk:
-    #         self.product.quantity -= self.quantity - self.__class__.get_item(self.pk).quantity
-    #     else:
-    #         self.product.quantity -= self.quantity
-    #
-    #     self.product.save(update_fields=('quantity'))
-    #     super(self.__class__, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'корзина'

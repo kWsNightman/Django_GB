@@ -14,7 +14,7 @@
                class="{% if request.resolver_match.namespace == 'products' %}active{% endif %}">продукты</a></li>
         <li><a href="{% url 'contacts' %}" class="{% if request.path == '/contacts/' %}active{% endif %}">контакты</a>
             {% if user.is_superuser %}
-                <li><a href="http://localhost:4200/">Админка</a>
+                <li><a href="{% url 'admin_staff:categories' %}">Админка</a>
             {% endif %}
             </li>
         {% if user.is_authenticated %}
@@ -46,8 +46,8 @@
     <a href="#" class="search"></a>
     <a href="{% url 'basket:view' %}" class="basket">
         <span class="basket_count">
-        {% if basket_count %}
-            {{ basket_count.0.total_cost|floatformat:0 }} руб.<br>({{ basket_count.0.product_quantity }}&nbsp;шт.)
+        {% if total_cost %}
+            {{ total_cost|floatformat:0 }} руб.<br>({{ total_count }}&nbsp;шт.)
         {% endif %}
         </span>
     </a>

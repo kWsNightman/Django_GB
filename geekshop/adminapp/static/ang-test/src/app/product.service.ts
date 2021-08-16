@@ -8,8 +8,8 @@ import {Category, Products} from "./products";
   providedIn: 'root'
 })
 export class ProductService {
-  private categoryUrl = 'http://127.0.0.1:8000/admin_staff/api/categories';
-  private productsUrl = 'http://127.0.0.1:8000/admin_staff/api/products';
+  private categoryUrl = 'http://185.46.11.115/admin_staff/api/categories';
+  private productsUrl = 'http://185.46.11.115/admin_staff/api/products';
 
   constructor(
     private http: HttpClient,) { }
