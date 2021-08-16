@@ -18,13 +18,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from django.views.decorators.cache import cache_page
 
 from .views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('admin_staff/', include('adminapp.urls', namespace='admin_staff')),
-    path('', IndexListView.as_view(), name='index'),
+    path('', cache_page(3600)(IndexListView.as_view()), name='index'),
     path('contacts/', ContactsTemplateView.as_view(), name='contacts'),
     path('products/', include('mainapp.urls', namespace='products')),
     path('auth/', include('authapp.urls', namespace='auth')),

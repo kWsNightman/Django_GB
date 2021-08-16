@@ -6,7 +6,7 @@ window.onload = function () {
 
             success: function (data) {
 
-                $('.basket').html(data.i)
+                $('.basket').html(data.i);
                 $('.basket_list').html(data.result);
 
             },

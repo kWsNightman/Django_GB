@@ -28,11 +28,10 @@
     </tbody>
 </table>
 
-{% if basket_count %}
-
+{% if total_cost %}
     <div class="basket_summary">
-        В корзине {{ basket_count.0.product_quantity }} товаров общей стоимостью
-        {{ basket_count.0.total_cost }} руб
+        В корзине {{ total_count }} товаров общей стоимостью
+        {{ total_cost }} руб
     </div>
     <button class="btn btn-default btn-round">
         <a href="{% url 'ordersapp:order_create' %}">

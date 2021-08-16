@@ -2,6 +2,7 @@ from django.db import models
 
 from geekshop import settings
 from mainapp.models import Product
+from django.utils.functional import cached_property
 
 
 class BasketQuerySet(models.QuerySet):
@@ -26,16 +27,20 @@ class Basket(models.Model):
     def product_cost(self):
         return self.product.price * self.quantity
 
+    @cached_property
+    def get_items_cachet(self):
+        return self.user.basket.select_related()
+
     @property
     def product_quantity_cost(self):
-        _items = Basket.objects.filter(user=self.user)
+        _items = self.get_items_cachet
         _total_quantity = sum(list(map(lambda x: x.quantity, _items)))
         _total_cost = sum(list(map(lambda x: x.product_cost, _items)))
         return [_total_quantity, _total_cost]
 
-    # @staticmethod
-    # def get_item(pk):
-    #     return Basket.objects.filter(pk=pk).first()
+    @staticmethod
+    def get_item(pk):
+        return Basket.objects.filter(pk=pk).first()
 
     class Meta:
         verbose_name = 'корзина'

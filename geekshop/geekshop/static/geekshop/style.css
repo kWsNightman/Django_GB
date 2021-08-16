@@ -15,9 +15,15 @@ html, body {
 
 
 .container {
+    display: table;
     width: 1366px;
     margin: 0 auto;
     min-height: 100%;
+}
+
+.content {
+    display: table-row;
+    height: 100%;
 }
 
 .slider {
@@ -81,7 +87,7 @@ html, body {
     background-image: url(img/search.png);
     position: absolute;
     top: 63px;
-    left: 1088px;
+    left: 1149px;
 }
 
 .basket {
@@ -91,7 +97,7 @@ html, body {
     background-image: url(img/basket.png);
     position: absolute;
     top: 63px;
-    left: 1117px;
+    left: 1178px;
     text-decoration: none;
 }
 
