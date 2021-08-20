@@ -1,3 +1,6 @@
+from django.db import connection
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -86,6 +89,21 @@ class ProductsOfCategoryViewSet(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = serializers.ProductsSerializer
 
-
     def get_queryset(self):
         return Product.objects.filter(category__pk=self.kwargs.get('pk')).order_by('is_deleted', 'name')
+
+
+def db_profile_by_type(prefix, type, queries):
+    update_queries = list(filter(lambda x: type in x['sql'], queries))
+    print(f'db_profile {type} for {prefix}:')
+    [print(query['sql']) for query in update_queries]
+
+
+@receiver(pre_save, sender=ProductCategory)
+def product_is_active_productcategory_save(sender, instance, **kwargs):
+    if instance.pk and not instance.is_deleted:
+        instance.product_set.update(is_deleted=False)
+    else:
+        instance.product_set.update(is_deleted=True)
+
+    db_profile_by_type(sender, 'UPDATE', connection.queries)
